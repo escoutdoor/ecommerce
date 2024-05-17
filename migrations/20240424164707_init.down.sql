@@ -1,0 +1,12 @@
+ALTER TABLE IF EXISTS order_items DROP CONSTRAINT IF EXISTS fk_shipping_details;
+ALTER TABLE IF EXISTS order_items DROP CONSTRAINT IF EXISTS fk_product;
+ALTER TABLE IF EXISTS order_items DROP CONSTRAINT IF EXISTS fk_order;
+
+DROP TABLE IF EXISTS order_items;
+DROP TABLE IF EXISTS shipping_details;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS customers;
+
+DROP TYPE IF EXISTS order_status;
