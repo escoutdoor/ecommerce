@@ -27,7 +27,7 @@ func (h *CustomerHandler) handleGetCustomerById(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	c, err := h.store.GetById(id)
+	customer, err := h.store.GetById(id)
 	if err != nil {
 		if errors.Is(err, store.ErrCustomerNotFound) {
 			respond.Error(w, http.StatusNotFound, err)
@@ -38,7 +38,7 @@ func (h *CustomerHandler) handleGetCustomerById(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	respond.JSON(w, http.StatusOK, c)
+	respond.JSON(w, http.StatusOK, customer)
 }
 
 func (h *CustomerHandler) handleUpdateCustomer(w http.ResponseWriter, r *http.Request) {

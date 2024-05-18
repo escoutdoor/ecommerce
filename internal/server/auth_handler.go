@@ -28,7 +28,7 @@ func (h *AuthHandler) handleLoginCustomer(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	c, err := h.store.Login(req)
+	customer, err := h.store.Login(req)
 	if err != nil {
 		if errors.Is(err, store.ErrInvalidEmailOrPassword) {
 			respond.Error(w, http.StatusUnauthorized, err)
@@ -39,14 +39,14 @@ func (h *AuthHandler) handleLoginCustomer(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	token, err := tokens.CreateJWT(c.ID)
+	token, err := tokens.CreateJWT(customer.ID)
 	if err != nil {
 		respond.Error(w, http.StatusBadRequest, err)
 		return
 	}
 
 	response := models.AuthResponse{
-		Customer: c,
+		Customer: customer,
 		Token:    token,
 	}
 	respond.JSON(w, http.StatusOK, response)
@@ -59,20 +59,20 @@ func (h *AuthHandler) handleRegisterCustomer(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	c, err := h.store.Register(req)
+	customer, err := h.store.Register(req)
 	if err != nil {
 		respond.Error(w, http.StatusBadRequest, err)
 		return
 	}
 
-	token, err := tokens.CreateJWT(c.ID)
+	token, err := tokens.CreateJWT(customer.ID)
 	if err != nil {
 		respond.Error(w, http.StatusBadRequest, err)
 		return
 	}
 
 	response := models.AuthResponse{
-		Customer: c,
+		Customer: customer,
 		Token:    token,
 	}
 	respond.JSON(w, http.StatusOK, response)
