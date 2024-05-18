@@ -27,7 +27,27 @@ func (s *Server) Router() *chi.Mux {
 		r.Post("/register", s.auth.handleRegisterCustomer)
 	})
 
+	router.Route("/categories", func(r chi.Router) {
+		r.Group(func(r chi.Router) {
+			r.Use(middleware.JWTAuth(s.customer.store))
+
+		})
+	})
+
+	router.Route("/products", func(r chi.Router) {
+		r.Group(func(r chi.Router) {
+			r.Use(middleware.JWTAuth(s.customer.store))
+
+			r.Post("/", s.product.handleCreateProduct)
+		})
+	})
+
 	router.Route("/orders", func(r chi.Router) {
+		r.Group(func(r chi.Router) {
+			r.Use(middleware.JWTAuth(s.customer.store))
+
+			r.Post("/", s.order.handleCreateOrder)
+		})
 	})
 
 	return router

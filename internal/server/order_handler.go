@@ -2,9 +2,11 @@ package server
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"net/http"
 
+	"github.com/escoutdoor/ecommerce/internal/models"
 	"github.com/escoutdoor/ecommerce/internal/store"
 	"github.com/escoutdoor/ecommerce/internal/utils/respond"
 )
@@ -20,7 +22,25 @@ func NewOrderHandler(s store.OrderStorer) *OrderHandler {
 }
 
 func (h *OrderHandler) handleCreateOrder(w http.ResponseWriter, r *http.Request) {
+	id, err := getIDFromCtx(r)
+	if err != nil {
+		respond.Error(w, http.StatusBadRequest, err)
+		return
+	}
 
+	var req models.OrderReq
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		respond.Error(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	order, err := h.store.Create(r.Context(), id, req)
+	if err != nil {
+		respond.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	respond.JSON(w, http.StatusOK, order)
 }
 
 func (h *OrderHandler) handleGetOrderById(w http.ResponseWriter, r *http.Request) {

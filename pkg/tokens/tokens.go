@@ -7,8 +7,6 @@ import (
 	"strconv"
 	"time"
 
-	"log"
-
 	"github.com/escoutdoor/ecommerce/internal/models"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -38,7 +36,6 @@ func VerifyToken(tokenStr string) (int, error) {
 	}
 
 	if token.Valid {
-		log.Print("Token is valid")
 	}
 
 	id, err := strconv.Atoi(claims.ID)

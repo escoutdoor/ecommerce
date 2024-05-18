@@ -17,6 +17,7 @@ type Server struct {
 
 	customer *CustomerHandler
 	auth     *AuthHandler
+	product  *ProductHandler
 	order    *OrderHandler
 }
 
@@ -39,10 +40,14 @@ func NewServer() *http.Server {
 	orderStore := store.NewOrderStore(db)
 	order := NewOrderHandler(orderStore)
 
+	productStore := store.NewProductStore(db)
+	product := NewProductHandler(productStore)
+
 	s := &Server{
 		listenAddr: ":8080",
 		customer:   customer,
 		auth:       auth,
+		product:    product,
 		order:      order,
 	}
 
