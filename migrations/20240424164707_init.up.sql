@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS order_items (
     "product_id" INTEGER NOT NULL,
     "order_id" INTEGER NOT NULL,
     "shipping_details_id" INTEGER NOT NULL,
+    "quantity" INTEGER NOT NULL,
     "created_at" TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     CONSTRAINT "fk_order" FOREIGN KEY ("order_id")

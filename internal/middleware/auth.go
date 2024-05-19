@@ -25,19 +25,19 @@ func JWTAuth(s store.CustomerStorer) func(h http.Handler) http.Handler {
 			}
 			token = token[len("Bearer "):]
 
-			customerId, err := tokens.VerifyToken(token)
+			customerID, err := tokens.VerifyToken(token)
 			if err != nil {
 				respond.Error(w, http.StatusUnauthorized, err)
 				return
 			}
 
-			_, err = s.GetById(customerId)
+			_, err = s.GetByID(customerID)
 			if err != nil {
 				respond.Error(w, http.StatusUnauthorized, err)
 				return
 			}
 
-			ctx := context.WithValue(r.Context(), "customer_id", fmt.Sprintf("%d", customerId))
+			ctx := context.WithValue(r.Context(), "customer_id", fmt.Sprintf("%d", customerID))
 			newReq := r.WithContext(ctx)
 			h.ServeHTTP(w, newReq)
 		})

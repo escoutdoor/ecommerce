@@ -5,7 +5,7 @@ import "time"
 type Order struct {
 	ID         int         `json:"id"`
 	Total      float64     `json:"total"`
-	CustomerId int         `json:"customer_id"`
+	CustomerID int         `json:"customer_id"`
 	OrderItems []OrderItem `json:"order_items"`
 
 	CreatedAt time.Time `json:"created_at"`
@@ -19,24 +19,24 @@ type OrderReq struct {
 type OrderItem struct {
 	ID                int    `json:"id"`
 	Status            string `json:"status"`
-	ProductId         int    `json:"product_id"`
-	OrderId           int    `json:"order_id"`
-	ShippingDetailsId int    `json:"shipping_details_id"`
+	ProductID         int    `json:"product_id"`
+	OrderID           int    `json:"order_id"`
+	ShippingDetailsID int    `json:"shipping_details_id"`
+	Quantity          int    `json:"quantity"`
 
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type CreateOrderItemReq struct {
-	ProductId          int `json:"product_id"`
+	ProductID          int `json:"product_id"`
 	ShippingDetailsReq `json:"shipping_details"`
+	Quantity           int `json:"quantity"`
 }
 
 type UpdateOrderItemReq struct {
-	Status            string `json:"status"`
-	ProductId         int    `json:"product_id"`
-	OrderId           int    `json:"order_id"`
-	ShippingDetailsId int    `json:"shipping_details_id"`
+	Status   string `json:"status"`
+	Quantity int    `json:"quantity"`
 }
 
 type ShippingDetails struct {

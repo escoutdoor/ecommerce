@@ -7,7 +7,7 @@ type Product struct {
 	Name        string  `json:"name"`
 	Description string  `json:"description"`
 	Price       float64 `json:"price"`
-	CategoryId  int     `json:"category_id"`
+	CategoryID  int     `json:"category_id"`
 
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
@@ -17,7 +17,7 @@ type ProductReq struct {
 	Name        string  `json:"name"`
 	Description string  `json:"description"`
 	Price       float64 `json:"price"`
-	CategoryId  int     `json:"category_id"`
+	CategoryID  int     `json:"category_id"`
 }
 
 type Category struct {
@@ -28,6 +28,6 @@ type Category struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-type CreateCategoryReq struct {
+type CategoryReq struct {
 	Name string `json:"name"`
 }

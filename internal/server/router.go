@@ -12,7 +12,7 @@ func (s *Server) Router() *chi.Mux {
 	router.Use(chimiddle.StripSlashes)
 
 	router.Route("/customers", func(r chi.Router) {
-		r.Get("/{id}", s.customer.handleGetCustomerById)
+		r.Get("/{id}", s.customer.handleGetCustomerByID)
 
 		r.Group(func(r chi.Router) {
 			r.Use(middleware.JWTAuth(s.customer.store))
@@ -31,6 +31,7 @@ func (s *Server) Router() *chi.Mux {
 		r.Group(func(r chi.Router) {
 			r.Use(middleware.JWTAuth(s.customer.store))
 
+			r.Post("/", s.category.handleCreateCategory)
 		})
 	})
 

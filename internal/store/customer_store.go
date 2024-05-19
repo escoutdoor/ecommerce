@@ -15,7 +15,7 @@ var (
 )
 
 type CustomerStorer interface {
-	GetById(id int) (*models.Customer, error)
+	GetByID(id int) (*models.Customer, error)
 	Update(id int, data models.UpdateCustomerReq) (*models.Customer, error)
 	Delete(id int) error
 }
@@ -30,7 +30,7 @@ func NewCustomerStore(db *sql.DB) *CustomerStore {
 	}
 }
 
-func (s *CustomerStore) GetById(id int) (*models.Customer, error) {
+func (s *CustomerStore) GetByID(id int) (*models.Customer, error) {
 	stmt, err := s.db.Prepare(`
 		SELECT * FROM CUSTOMERS WHERE ID = $1
 	`)
@@ -116,7 +116,7 @@ func (s *CustomerStore) Update(id int, data models.UpdateCustomerReq) (*models.C
 }
 
 func (s *CustomerStore) Delete(id int) error {
-	if _, err := s.GetById(id); err != nil {
+	if _, err := s.GetByID(id); err != nil {
 		return err
 	}
 

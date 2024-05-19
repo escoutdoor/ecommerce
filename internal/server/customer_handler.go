@@ -20,14 +20,14 @@ func NewCustomerHandler(s store.CustomerStorer) *CustomerHandler {
 	}
 }
 
-func (h *CustomerHandler) handleGetCustomerById(w http.ResponseWriter, r *http.Request) {
+func (h *CustomerHandler) handleGetCustomerByID(w http.ResponseWriter, r *http.Request) {
 	id, err := getID(r)
 	if err != nil {
 		respond.Error(w, http.StatusBadRequest, err)
 		return
 	}
 
-	customer, err := h.store.GetById(id)
+	customer, err := h.store.GetByID(id)
 	if err != nil {
 		if errors.Is(err, store.ErrCustomerNotFound) {
 			respond.Error(w, http.StatusNotFound, err)

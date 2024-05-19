@@ -43,14 +43,14 @@ func (h *OrderHandler) handleCreateOrder(w http.ResponseWriter, r *http.Request)
 	respond.JSON(w, http.StatusOK, order)
 }
 
-func (h *OrderHandler) handleGetOrderById(w http.ResponseWriter, r *http.Request) {
+func (h *OrderHandler) handleGetOrderByID(w http.ResponseWriter, r *http.Request) {
 	id, err := getID(r)
 	if err != nil {
 		respond.Error(w, http.StatusBadRequest, err)
 		return
 	}
 
-	order, err := h.store.GetById(id)
+	order, err := h.store.GetByID(id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			respond.Error(w, http.StatusNotFound, store.ErrOrderNotFound)
