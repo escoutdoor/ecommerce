@@ -48,6 +48,7 @@ func (s *Server) Router() *chi.Mux {
 			r.Use(middleware.JWTAuth(s.customer.store))
 
 			r.Post("/", s.order.handleCreateOrder)
+			r.Delete("/{id}", s.order.handleDeleteOrder)
 		})
 	})
 

@@ -17,7 +17,6 @@ var (
 type OrderStorer interface {
 	Create(ctx context.Context, customerID int, data models.OrderReq) (*models.Order, error)
 	GetByID(id int) (*models.Order, error)
-	Update(id int, data models.OrderReq) (*models.Order, error)
 	Delete(id int) error
 }
 
@@ -58,7 +57,7 @@ func (s *OrderStore) Create(ctx context.Context, customerID int, data models.Ord
 	for _, v := range data.OrderItems {
 		product, ok := products[v.ProductID]
 		if !ok {
-			return nil, fmt.Errorf("%s with id: %d", ErrProductNotFound, v.ProductID)
+			return nil, fmt.Errorf("product with id = %d not found", v.ProductID)
 		}
 
 		total += float64(v.Quantity) * product.Price
@@ -105,26 +104,6 @@ func (s *OrderStore) GetByID(id int) (*models.Order, error) {
 	return nil, err
 }
 
-func (s *OrderStore) Update(id int, data models.OrderReq) (*models.Order, error) {
-	stmt, err := s.db.Prepare(`
-		UPDATE ORDERS SET
-	`)
-	if err != nil {
-		return nil, err
-	}
-
-	rows, err := stmt.Query()
-	if err != nil {
-		return nil, err
-	}
-
-	if rows.Next() {
-		return scanIntoOrder(rows)
-	}
-
-	return nil, err
-}
-
 func (s *OrderStore) Delete(id int) error {
 	stmt, err := s.db.Prepare(`
 		DELETE FROM ORDERS WHERE ID = $1
@@ -133,9 +112,18 @@ func (s *OrderStore) Delete(id int) error {
 		return err
 	}
 
-	_, err = stmt.Query(id)
+	res, err := stmt.Exec(id)
 	if err != nil {
 		return err
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("order cannot be deleted because it doesn't exist")
 	}
 
 	return err

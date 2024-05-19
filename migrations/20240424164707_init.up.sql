@@ -37,7 +37,6 @@ CREATE TABLE IF NOT EXISTS orders (
     "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     CONSTRAINT "fk_customer" FOREIGN KEY ("customer_id")
         REFERENCES customers ("id")
-        ON UPDATE CASCADE
         ON DELETE SET NULL
 );
 
@@ -64,15 +63,12 @@ CREATE TABLE IF NOT EXISTS order_items (
     "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     CONSTRAINT "fk_order" FOREIGN KEY ("order_id")
         REFERENCES orders ("id")
-        ON UPDATE CASCADE
-        ON DELETE SET NULL,
+        ON DELETE CASCADE,
     CONSTRAINT "fk_product" FOREIGN KEY ("product_id")
         REFERENCES products ("id")
-        ON UPDATE CASCADE
         ON DELETE SET NULL,
     CONSTRAINT "fk_shipping_details" FOREIGN KEY ("shipping_details_id")
         REFERENCES shipping_details ("id")
-        ON UPDATE CASCADE
         ON DELETE RESTRICT
 );
 

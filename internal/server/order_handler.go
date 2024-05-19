@@ -36,6 +36,11 @@ func (h *OrderHandler) handleCreateOrder(w http.ResponseWriter, r *http.Request)
 
 	order, err := h.store.Create(r.Context(), id, req)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			respond.Error(w, http.StatusNotFound, store.ErrProductNotFound)
+			return
+		}
+
 		respond.Error(w, http.StatusBadRequest, err)
 		return
 	}
@@ -52,20 +57,11 @@ func (h *OrderHandler) handleGetOrderByID(w http.ResponseWriter, r *http.Request
 
 	order, err := h.store.GetByID(id)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			respond.Error(w, http.StatusNotFound, store.ErrOrderNotFound)
-			return
-		}
-
 		respond.Error(w, http.StatusBadRequest, err)
 		return
 	}
 
 	respond.JSON(w, http.StatusOK, order)
-}
-
-func (h *OrderHandler) handleUpdateOrder(w http.ResponseWriter, r *http.Request) {
-
 }
 
 func (h *OrderHandler) handleDeleteOrder(w http.ResponseWriter, r *http.Request) {
