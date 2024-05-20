@@ -34,3 +34,34 @@ func (h *ProductHandler) handleCreateProduct(w http.ResponseWriter, r *http.Requ
 
 	respond.JSON(w, http.StatusOK, product)
 }
+
+func (h *ProductHandler) handleGetProductByID(w http.ResponseWriter, r *http.Request) {
+	id, err := getID(r)
+	if err != nil {
+		respond.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	product, err := h.store.GetByID(id)
+	if err != nil {
+		respond.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	respond.JSON(w, http.StatusOK, product)
+}
+
+func (h *ProductHandler) handleDeleteProduct(w http.ResponseWriter, r *http.Request) {
+	id, err := getID(r)
+	if err != nil {
+		respond.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err := h.store.Delete(id); err != nil {
+		respond.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	respond.JSON(w, http.StatusOK, "product successfully deleted")
+}

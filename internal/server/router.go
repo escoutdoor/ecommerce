@@ -28,10 +28,13 @@ func (s *Server) Router() *chi.Mux {
 	})
 
 	router.Route("/categories", func(r chi.Router) {
+		r.Get("/{id}", s.category.handleGetCategoryByID)
+
 		r.Group(func(r chi.Router) {
 			r.Use(middleware.JWTAuth(s.customer.store))
 
 			r.Post("/", s.category.handleCreateCategory)
+			r.Delete("/{id}", s.category.handleDeleteCategory)
 		})
 	})
 

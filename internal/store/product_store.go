@@ -15,6 +15,8 @@ var (
 
 type ProductStorer interface {
 	Create(data models.ProductReq) (*models.Product, error)
+	GetByID(id int) (*models.Product, error)
+	Delete(id int) error
 }
 
 type ProductStore struct {
@@ -63,6 +65,29 @@ func (s *ProductStore) GetByID(id int) (*models.Product, error) {
 	}
 
 	return nil, err
+}
+
+func (s *ProductStore) Delete(id int) error {
+	stmt, err := s.db.Prepare("DELETE FROM PRODUCTS WHERE ID = $1")
+	if err != nil {
+		return err
+	}
+
+	res, err := stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("product cannot be deleted because it doesn't exist")
+	}
+
+	return err
 }
 
 func (s *ProductStore) GetByIDs(ids ...int) (map[int]models.Product, error) {

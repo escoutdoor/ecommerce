@@ -1,7 +1,9 @@
 package server
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/escoutdoor/ecommerce/internal/models"
@@ -33,4 +35,41 @@ func (h *CategoryHandler) handleCreateCategory(w http.ResponseWriter, r *http.Re
 	}
 
 	respond.JSON(w, http.StatusOK, category)
+}
+
+func (h *CategoryHandler) handleGetCategoryByID(w http.ResponseWriter, r *http.Request) {
+	id, err := getID(r)
+	if err != nil {
+		respond.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	category, err := h.store.GetByID(id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			respond.Error(w, http.StatusNotFound, store.ErrCategoryNotFound)
+			return
+		}
+
+		respond.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	respond.JSON(w, http.StatusOK, category)
+}
+
+func (h *CategoryHandler) handleDeleteCategory(w http.ResponseWriter, r *http.Request) {
+	id, err := getID(r)
+	if err != nil {
+		respond.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	err = h.store.Delete(id)
+	if err != nil {
+		respond.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	respond.JSON(w, http.StatusOK, "category successfully deleted")
 }
