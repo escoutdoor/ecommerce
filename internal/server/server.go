@@ -77,7 +77,7 @@ func getID(r *http.Request) (int, error) {
 	return id, nil
 }
 
-func getIDFromCtx(r *http.Request) (int, error) {
+func getCustomerIDCtx(r *http.Request) (int, error) {
 	idStr := r.Context().Value("customer_id").(string)
 	id, err := strconv.Atoi(idStr)
 	if err != nil {

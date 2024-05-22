@@ -17,6 +17,7 @@ type ProductStorer interface {
 	Create(data models.ProductReq) (*models.Product, error)
 	GetByID(id int) (*models.Product, error)
 	Delete(id int) error
+	Update(id int, data models.ProductReq) (*models.Product, error)
 }
 
 type ProductStore struct {
@@ -88,6 +89,32 @@ func (s *ProductStore) Delete(id int) error {
 	}
 
 	return err
+}
+
+func (s *ProductStore) Update(id int, data models.ProductReq) (*models.Product, error) {
+	stmt, err := s.db.Prepare(`
+		UPDATE PRODUCTS SET
+		NAME = $1,
+		DESCRIPTION = $2,
+		PRICE = $3,
+		CATEGORY_ID = $4
+		WHERE ID = $5
+		RETURNING *
+	`)
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := stmt.Query(data.Name, data.Description, data.Price, data.CategoryID, id)
+	if err != nil {
+		return nil, err
+	}
+
+	if rows.Next() {
+		return scanIntoProduct(rows)
+	}
+
+	return nil, err
 }
 
 func (s *ProductStore) GetByIDs(ids ...int) (map[int]models.Product, error) {

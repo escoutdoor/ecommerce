@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS products(
     "category_id" INTEGER,
     "created_at" TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    FOREIGN KEY ("category_id") REFERENCES categories ("id")
+    FOREIGN KEY ("category_id") REFERENCES categories ("id") ON DELETE SET NULL
 );
 
 CREATE TYPE order_status as ENUM('pending', 'processing', 'shipped', 'delivered', 'cancelled');
@@ -55,7 +55,7 @@ CREATE TABLE shipping_details (
 CREATE TABLE IF NOT EXISTS order_items (
     "id" SERIAL PRIMARY KEY,
     "status" order_status NOT NULL DEFAULT 'pending',
-    "product_id" INTEGER NOT NULL,
+    "product_id" INTEGER,
     "order_id" INTEGER NOT NULL,
     "shipping_details_id" INTEGER NOT NULL,
     "quantity" INTEGER NOT NULL,

@@ -40,10 +40,14 @@ func (s *Server) Router() *chi.Mux {
 	})
 
 	router.Route("/products", func(r chi.Router) {
+		r.Get("/{id}", s.product.handleGetProductByID)
+
 		r.Group(func(r chi.Router) {
 			r.Use(middleware.JWTAuth(s.customer.store))
 
 			r.Post("/", s.product.handleCreateProduct)
+			r.Put("/{id}", s.product.handleUpdateProduct)
+			r.Delete("/{id}", s.product.handleDeleteProduct)
 		})
 	})
 

@@ -42,7 +42,7 @@ func (h *CustomerHandler) handleGetCustomerByID(w http.ResponseWriter, r *http.R
 }
 
 func (h *CustomerHandler) handleUpdateCustomer(w http.ResponseWriter, r *http.Request) {
-	id, err := getIDFromCtx(r)
+	id, err := getCustomerIDCtx(r)
 	if err != nil {
 		respond.Error(w, http.StatusBadRequest, err)
 		return
@@ -64,7 +64,7 @@ func (h *CustomerHandler) handleUpdateCustomer(w http.ResponseWriter, r *http.Re
 }
 
 func (h *CustomerHandler) handleDeleteCustomer(w http.ResponseWriter, r *http.Request) {
-	id, err := getIDFromCtx(r)
+	id, err := getCustomerIDCtx(r)
 	if err != nil {
 		respond.Error(w, http.StatusBadRequest, err)
 		return

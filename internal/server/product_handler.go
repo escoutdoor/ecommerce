@@ -65,3 +65,27 @@ func (h *ProductHandler) handleDeleteProduct(w http.ResponseWriter, r *http.Requ
 
 	respond.JSON(w, http.StatusOK, "product successfully deleted")
 }
+
+func (h *ProductHandler) handleUpdateProduct(w http.ResponseWriter, r *http.Request) {
+	var req models.ProductReq
+	_, err := getCustomerIDCtx(r)
+	if err != nil {
+		respond.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	productID, err := getID(r)
+	if err != nil {
+		respond.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	product, err := h.store.Update(productID, req)
+	if err != nil {
+		respond.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	respond.JSON(w, http.StatusOK, product)
+
+}
