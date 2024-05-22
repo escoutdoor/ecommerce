@@ -73,3 +73,31 @@ func (h *CategoryHandler) handleDeleteCategory(w http.ResponseWriter, r *http.Re
 
 	respond.JSON(w, http.StatusOK, "category successfully deleted")
 }
+
+func (h *CategoryHandler) handleUpdateCategory(w http.ResponseWriter, r *http.Request) {
+	var req models.CategoryReq
+	_, err := getIDFromCtx(r)
+	if err != nil {
+		respond.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	categoryID, err := getID(r)
+	if err != nil {
+		respond.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err = json.NewDecoder(r.Body).Decode(&req); err != nil {
+		respond.Error(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	category, err := h.store.Update(categoryID, req)
+	if err != nil {
+		respond.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	respond.JSON(w, http.StatusOK, category)
+}

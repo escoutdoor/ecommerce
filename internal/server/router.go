@@ -35,6 +35,7 @@ func (s *Server) Router() *chi.Mux {
 
 			r.Post("/", s.category.handleCreateCategory)
 			r.Delete("/{id}", s.category.handleDeleteCategory)
+			r.Put("/{id}", s.category.handleUpdateCategory)
 		})
 	})
 

@@ -16,6 +16,7 @@ type CategoryStorer interface {
 	GetByID(id int) (*models.Category, error)
 	Create(data models.CategoryReq) (*models.Category, error)
 	Delete(id int) error
+	Update(id int, data models.CategoryReq) (*models.Category, error)
 }
 
 type CategoryStore struct {
@@ -88,6 +89,28 @@ func (s *CategoryStore) Delete(id int) error {
 	}
 
 	return err
+}
+
+func (s *CategoryStore) Update(id int, data models.CategoryReq) (*models.Category, error) {
+	stmt, err := s.db.Prepare(`
+		UPDATE CATEGORIES SET
+		NAME = $1
+		WHERE ID = $2
+	`)
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := stmt.Query(data.Name, id)
+	if err != nil {
+		return nil, err
+	}
+
+	if rows.Next() {
+		return scanIntoCategory(rows)
+	}
+
+	return nil, err
 }
 
 func scanIntoCategory(rows *sql.Rows) (*models.Category, error) {
