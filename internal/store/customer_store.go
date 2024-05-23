@@ -74,11 +74,10 @@ func (s *CustomerStore) Update(id int, data models.UpdateCustomerReq) (*models.C
 	stmt, err := s.db.Prepare(`
 		UPDATE CUSTOMERS 
 		SET 
-			EMAIL = COALESCE(NULLIF($1, ''), EMAIL),
-			FIRST_NAME = COALESCE(NULLIF($2, ''), FIRST_NAME),
-			LAST_NAME = COALESCE(NULLIF($3, ''), LAST_NAME),
-			DATE_OF_BIRTH = CASE WHEN $4::date IS NOT NULL THEN $4 ELSE NULL END,
-			UPDATE_AT=NOW()
+			EMAIL = $1,
+			FIRST_NAME = $2,
+			LAST_NAME = $3,
+			DATE_OF_BIRTH = $4
 		WHERE ID = $5
 		RETURNING *
 	`)
@@ -86,11 +85,21 @@ func (s *CustomerStore) Update(id int, data models.UpdateCustomerReq) (*models.C
 		return nil, err
 	}
 
+	var birthdate *time.Time
+	if data.DateOfBirth != "" {
+		pb, err := time.Parse("2006-01-02", data.DateOfBirth)
+		if err != nil {
+			return nil, err
+		}
+
+		birthdate = &pb
+	}
+
 	rows, err := stmt.Query(
 		data.Email,
 		data.FirstName,
 		data.LastName,
-		data.DateOfBirth.Format(time.RFC3339),
+		birthdate,
 		id,
 	)
 	if err != nil {

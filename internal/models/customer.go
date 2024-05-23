@@ -15,9 +15,8 @@ type Customer struct {
 }
 
 type UpdateCustomerReq struct {
-	Email       string    `json:"email,omitempty"`
-	FirstName   string    `json:"first_name,omitempty"`
-	LastName    string    `json:"last_name,omitempty"`
-	DateOfBirth time.Time `json:"date_of_birth,omitempty"`
-	Password    string    `json:"password,omitempty"`
+	Email       string `json:"email" validate:"required,email"`
+	FirstName   string `json:"first_name" validate:"required,min=2"`
+	LastName    string `json:"last_name,omitempty" validate:"omitempty,min=2"`
+	DateOfBirth string `json:"date_of_birth" validate:"omitempty"`
 }

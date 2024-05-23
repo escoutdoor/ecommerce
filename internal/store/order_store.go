@@ -57,7 +57,7 @@ func (s *OrderStore) Create(ctx context.Context, customerID int, data models.Ord
 	for _, v := range data.OrderItems {
 		product, ok := products[v.ProductID]
 		if !ok {
-			return nil, fmt.Errorf("product with id = %d not found", v.ProductID)
+			return nil, ErrProductNotFound
 		}
 
 		total += float64(v.Quantity) * product.Price
@@ -94,6 +94,10 @@ func (s *OrderStore) GetByID(id int) (*models.Order, error) {
 
 	rows, err := stmt.Query(id)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrOrderNotFound
+		}
+
 		return nil, err
 	}
 
@@ -153,7 +157,7 @@ func (s *OrderStore) createOrder(ctx context.Context, tx *sql.Tx, customerID int
 }
 
 func (s *OrderStore) createOrderItem(ctx context.Context, tx *sql.Tx, orderID int, data models.CreateOrderItemReq) (*models.OrderItem, error) {
-	shippingDetails, err := s.createShippingDetails(ctx, tx, data.ShippingDetailsReq)
+	shippingDetails, err := s.createShippingDetails(ctx, tx, data.ShippingDetails)
 	if err != nil {
 		return nil, err
 	}

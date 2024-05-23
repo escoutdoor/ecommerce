@@ -3,6 +3,7 @@ package store
 import (
 	"database/sql"
 	"errors"
+	"time"
 
 	"github.com/escoutdoor/ecommerce/internal/models"
 	"github.com/escoutdoor/ecommerce/pkg/password"
@@ -64,14 +65,24 @@ func (s *AuthStore) Register(data models.RegisterReq) (*models.Customer, error) 
 	}
 
 	stmt, err := s.db.Prepare(`
-		INSERT INTO CUSTOMERS(EMAIL, FIRST_NAME, LAST_NAME, PASSWORD) 
-		VALUES($1, $2, $3, $4) RETURNING * 
+		INSERT INTO CUSTOMERS(EMAIL, FIRST_NAME, LAST_NAME, DATE_OF_BIRTH, PASSWORD) 
+		VALUES($1, $2, $3, $4, $5) RETURNING * 
 	`)
 	if err != nil {
 		return nil, err
 	}
 
-	rows, err := stmt.Query(data.Email, data.FirstName, data.LastName, hashedPass)
+	var birthdate *time.Time
+	if data.DateOfBirth != "" {
+		pb, err := time.Parse("2006-01-02", data.DateOfBirth)
+		if err != nil {
+			return nil, err
+		}
+
+		birthdate = &pb
+	}
+
+	rows, err := stmt.Query(data.Email, data.FirstName, data.LastName, birthdate, hashedPass)
 	if err != nil {
 		return nil, err
 	}

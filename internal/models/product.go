@@ -14,10 +14,10 @@ type Product struct {
 }
 
 type ProductReq struct {
-	Name        string  `json:"name"`
+	Name        string  `json:"name" validate:"required"`
 	Description string  `json:"description"`
-	Price       float64 `json:"price"`
-	CategoryID  int     `json:"category_id"`
+	Price       float64 `json:"price" validate:"required"`
+	CategoryID  int     `json:"category_id" validate:"required"`
 }
 
 type Category struct {
@@ -29,5 +29,5 @@ type Category struct {
 }
 
 type CategoryReq struct {
-	Name string `json:"name"`
+	Name string `json:"name" validate:"required,min=3"`
 }

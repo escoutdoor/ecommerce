@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/escoutdoor/ecommerce/internal/models"
+	"github.com/lib/pq"
 )
 
 var (
@@ -40,6 +41,10 @@ func (s *ProductStore) Create(data models.ProductReq) (*models.Product, error) {
 
 	rows, err := stmt.Query(data.Name, data.Description, data.Price, data.CategoryID)
 	if err != nil {
+		if pgErr, ok := err.(*pq.Error); ok && pgErr.Code == "23503" {
+			return nil, ErrCategoryNotFound
+		}
+
 		return nil, err
 	}
 
@@ -94,10 +99,10 @@ func (s *ProductStore) Delete(id int) error {
 func (s *ProductStore) Update(id int, data models.ProductReq) (*models.Product, error) {
 	stmt, err := s.db.Prepare(`
 		UPDATE PRODUCTS SET
-		NAME = $1,
-		DESCRIPTION = $2,
-		PRICE = $3,
-		CATEGORY_ID = $4
+			NAME = $1,
+			DESCRIPTION = $2,
+			PRICE = $3,
+			CATEGORY_ID = $4
 		WHERE ID = $5
 		RETURNING *
 	`)
@@ -107,6 +112,10 @@ func (s *ProductStore) Update(id int, data models.ProductReq) (*models.Product, 
 
 	rows, err := stmt.Query(data.Name, data.Description, data.Price, data.CategoryID, id)
 	if err != nil {
+		if pgErr, ok := err.(*pq.Error); ok && pgErr.Code == "23503" {
+			return nil, ErrCategoryNotFound
+		}
+
 		return nil, err
 	}
 

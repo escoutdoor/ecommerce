@@ -9,6 +9,7 @@ import (
 	"github.com/escoutdoor/ecommerce/internal/store"
 	"github.com/escoutdoor/ecommerce/internal/utils/respond"
 	"github.com/escoutdoor/ecommerce/pkg/tokens"
+	"github.com/go-playground/validator/v10"
 )
 
 type AuthHandler struct {
@@ -24,24 +25,25 @@ func NewAuthHandler(s store.AuthStorer) *AuthHandler {
 func (h *AuthHandler) handleLoginCustomer(w http.ResponseWriter, r *http.Request) {
 	var req models.LoginReq
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		respond.Error(w, http.StatusUnprocessableEntity, err)
+		respond.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err := validator.New().Struct(req); err != nil {
+		errs := err.(validator.ValidationErrors)
+		respond.Error(w, http.StatusBadRequest, respond.ValidationError(errs))
 		return
 	}
 
 	customer, err := h.store.Login(req)
 	if err != nil {
-		if errors.Is(err, store.ErrInvalidEmailOrPassword) {
-			respond.Error(w, http.StatusUnauthorized, err)
-			return
-		}
-
 		respond.Error(w, http.StatusBadRequest, err)
 		return
 	}
 
 	token, err := tokens.CreateJWT(customer.ID)
 	if err != nil {
-		respond.Error(w, http.StatusBadRequest, err)
+		respond.Error(w, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -55,19 +57,30 @@ func (h *AuthHandler) handleLoginCustomer(w http.ResponseWriter, r *http.Request
 func (h *AuthHandler) handleRegisterCustomer(w http.ResponseWriter, r *http.Request) {
 	var req models.RegisterReq
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		respond.Error(w, http.StatusUnprocessableEntity, err)
+		respond.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err := validator.New().Struct(req); err != nil {
+		errs := err.(validator.ValidationErrors)
+		respond.Error(w, http.StatusBadRequest, respond.ValidationError(errs))
 		return
 	}
 
 	customer, err := h.store.Register(req)
 	if err != nil {
-		respond.Error(w, http.StatusBadRequest, err)
+		if errors.Is(err, store.ErrEmailAlreadyExists) {
+			respond.Error(w, http.StatusBadRequest, err)
+			return
+		}
+
+		respond.Error(w, http.StatusInternalServerError, err)
 		return
 	}
 
 	token, err := tokens.CreateJWT(customer.ID)
 	if err != nil {
-		respond.Error(w, http.StatusBadRequest, err)
+		respond.Error(w, http.StatusInternalServerError, err)
 		return
 	}
 

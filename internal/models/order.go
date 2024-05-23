@@ -13,7 +13,7 @@ type Order struct {
 }
 
 type OrderReq struct {
-	OrderItems []CreateOrderItemReq `json:"order_items"`
+	OrderItems []CreateOrderItemReq `json:"order_items" validate:"required,min=1,dive"`
 }
 
 type OrderItem struct {
@@ -29,14 +29,14 @@ type OrderItem struct {
 }
 
 type CreateOrderItemReq struct {
-	ProductID          int `json:"product_id"`
-	ShippingDetailsReq `json:"shipping_details"`
-	Quantity           int `json:"quantity"`
+	ProductID       int                `json:"product_id" validate:"required"`
+	ShippingDetails ShippingDetailsReq `json:"shipping_details" validate:"required"`
+	Quantity        int                `json:"quantity" validate:"required,min=1"`
 }
 
 type UpdateOrderItemReq struct {
-	Status   string `json:"status"`
-	Quantity int    `json:"quantity"`
+	Status   string `json:"status" validate:"required"`
+	Quantity int    `json:"quantity" validate:"required,min=1"`
 }
 
 type ShippingDetails struct {
@@ -53,10 +53,10 @@ type ShippingDetails struct {
 }
 
 type ShippingDetailsReq struct {
-	AddressLine1 string `json:"address_line1"`
-	AddressLine2 string `json:"address_line2"`
-	PostalCode   string `json:"postal_code"`
-	City         string `json:"city"`
-	Country      string `json:"country"`
-	Notes        string `json:"notes"`
+	AddressLine1 string `json:"address_line1" validate:"required"`
+	AddressLine2 string `json:"address_line2" validate:"omitempty"`
+	PostalCode   string `json:"postal_code" validate:"omitempty"`
+	City         string `json:"city" validate:"required,min=3"`
+	Country      string `json:"country" validate:"required,min=3"`
+	Notes        string `json:"notes" validate:"omitempty"`
 }
