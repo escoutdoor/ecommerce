@@ -65,7 +65,7 @@ func (s *CategoryStore) GetByID(id int) (*models.Category, error) {
 		return scanIntoCategory(rows)
 	}
 
-	return nil, err
+	return nil, ErrCategoryNotFound
 }
 
 func (s *CategoryStore) Delete(id int) error {

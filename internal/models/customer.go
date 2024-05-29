@@ -9,6 +9,7 @@ type Customer struct {
 	LastName    string     `json:"last_name"`
 	DateOfBirth *time.Time `json:"date_of_birth,omitempty"`
 	Password    string     `json:"-"`
+	Role        string     `json:"-"`
 
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`

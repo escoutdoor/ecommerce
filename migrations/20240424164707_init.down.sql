@@ -10,3 +10,4 @@ DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS customers;
 
 DROP TYPE IF EXISTS order_status;
+DROP TYPE IF EXISTS roles;

@@ -13,6 +13,7 @@ import (
 
 var (
 	ErrUnauthorized = errors.New("unauthorized")
+	ErrForbidden    = errors.New("forbidden")
 )
 
 func JWTAuth(s store.CustomerStorer) func(h http.Handler) http.Handler {
@@ -31,15 +32,28 @@ func JWTAuth(s store.CustomerStorer) func(h http.Handler) http.Handler {
 				return
 			}
 
-			_, err = s.GetByID(customerID)
+			customer, err := s.GetByID(customerID)
 			if err != nil {
 				respond.Error(w, http.StatusUnauthorized, err)
 				return
 			}
 
 			ctx := context.WithValue(r.Context(), "customer_id", fmt.Sprintf("%d", customerID))
+			ctx = context.WithValue(ctx, "role", customer.Role)
 			newReq := r.WithContext(ctx)
 			h.ServeHTTP(w, newReq)
 		})
 	}
+}
+
+func RoleGuard(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		role, ok := r.Context().Value("role").(string)
+		if !ok || role != "admin" {
+			respond.Error(w, http.StatusForbidden, ErrForbidden)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }

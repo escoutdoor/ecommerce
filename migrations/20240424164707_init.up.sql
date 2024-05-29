@@ -1,3 +1,5 @@
+CREATE TYPE roles as ENUM('admin', 'user');
+
 CREATE TABLE IF NOT EXISTS customers(
     "id" SERIAL PRIMARY KEY,
     "email" VARCHAR UNIQUE NOT NULL,
@@ -5,6 +7,7 @@ CREATE TABLE IF NOT EXISTS customers(
     "last_name" VARCHAR NULL,
     "date_of_birth" DATE NULL,
     "password" TEXT NOT NULL,
+    "role" roles NOT NULL DEFAULT 'user',
     "created_at" TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

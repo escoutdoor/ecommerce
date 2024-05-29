@@ -78,7 +78,11 @@ func getID(r *http.Request) (int, error) {
 }
 
 func getCustomerIDCtx(r *http.Request) (int, error) {
-	idStr := r.Context().Value("customer_id").(string)
+	idStr, ok := r.Context().Value("customer_id").(string)
+	if !ok {
+		return 0, fmt.Errorf("customer id not found in context")
+	}
+
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		return 0, fmt.Errorf("invalid id: %s", idStr)

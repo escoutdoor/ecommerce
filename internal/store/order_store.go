@@ -94,10 +94,6 @@ func (s *OrderStore) GetByID(id int) (*models.Order, error) {
 
 	rows, err := stmt.Query(id)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, ErrOrderNotFound
-		}
-
 		return nil, err
 	}
 
@@ -105,7 +101,7 @@ func (s *OrderStore) GetByID(id int) (*models.Order, error) {
 		return scanIntoOrder(rows)
 	}
 
-	return nil, err
+	return nil, ErrOrderNotFound
 }
 
 func (s *OrderStore) Delete(id int) error {

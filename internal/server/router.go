@@ -12,14 +12,16 @@ func (s *Server) Router() *chi.Mux {
 	router.Use(chimiddle.StripSlashes)
 
 	router.Route("/customers", func(r chi.Router) {
-		r.Get("/{id}", s.customer.handleGetCustomerByID)
+		r.Use(middleware.JWTAuth(s.customer.store))
 
 		r.Group(func(r chi.Router) {
-			r.Use(middleware.JWTAuth(s.customer.store))
+			r.Use(middleware.RoleGuard)
 
-			r.Put("/", s.customer.handleUpdateCustomer)
-			r.Delete("/", s.customer.handleDeleteCustomer)
+			r.Get("/{id}", s.customer.handleGetCustomerByID)
 		})
+
+		r.Put("/", s.customer.handleUpdateCustomer)
+		r.Delete("/", s.customer.handleDeleteCustomer)
 	})
 
 	router.Route("/auth", func(r chi.Router) {
@@ -32,6 +34,7 @@ func (s *Server) Router() *chi.Mux {
 
 		r.Group(func(r chi.Router) {
 			r.Use(middleware.JWTAuth(s.customer.store))
+			r.Use(middleware.RoleGuard)
 
 			r.Post("/", s.category.handleCreateCategory)
 			r.Delete("/{id}", s.category.handleDeleteCategory)
@@ -44,6 +47,7 @@ func (s *Server) Router() *chi.Mux {
 
 		r.Group(func(r chi.Router) {
 			r.Use(middleware.JWTAuth(s.customer.store))
+			r.Use(middleware.RoleGuard)
 
 			r.Post("/", s.product.handleCreateProduct)
 			r.Put("/{id}", s.product.handleUpdateProduct)

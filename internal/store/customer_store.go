@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	ErrCustomerNotFound = errors.New("user not found")
+	ErrCustomerNotFound = errors.New("customer not found")
 )
 
 type CustomerStorer interface {
@@ -136,9 +136,18 @@ func (s *CustomerStore) Delete(id int) error {
 		return err
 	}
 
-	_, err = stmt.Query(id)
+	res, err := stmt.Exec(id)
 	if err != nil {
 		return err
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("customer cannot be deleted because it doesn't exist")
 	}
 
 	return err
@@ -153,6 +162,7 @@ func scanIntoCustomer(rows *sql.Rows) (*models.Customer, error) {
 		&c.LastName,
 		&c.DateOfBirth,
 		&c.Password,
+		&c.Role,
 		&c.CreatedAt,
 		&c.UpdatedAt,
 	)

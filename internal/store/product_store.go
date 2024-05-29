@@ -70,7 +70,7 @@ func (s *ProductStore) GetByID(id int) (*models.Product, error) {
 		return scanIntoProduct(rows)
 	}
 
-	return nil, err
+	return nil, ErrProductNotFound
 }
 
 func (s *ProductStore) Delete(id int) error {
