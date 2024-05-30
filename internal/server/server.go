@@ -15,7 +15,7 @@ import (
 type Server struct {
 	listenAddr string
 
-	customer *CustomerHandler
+	user     *UserHandler
 	auth     *AuthHandler
 	product  *ProductHandler
 	order    *OrderHandler
@@ -32,8 +32,8 @@ func NewServer() *http.Server {
 		log.Fatal("new server error: ", err)
 	}
 
-	customerStore := store.NewCustomerStore(db)
-	customer := NewCustomerHandler(customerStore)
+	userStore := store.NewUserStore(db)
+	user := NewUserHandler(userStore)
 
 	authStore := store.NewAuthStore(db)
 	auth := NewAuthHandler(authStore)
@@ -49,7 +49,7 @@ func NewServer() *http.Server {
 
 	s := &Server{
 		listenAddr: ":8080",
-		customer:   customer,
+		user:       user,
 		auth:       auth,
 		product:    product,
 		order:      order,
@@ -77,10 +77,10 @@ func getID(r *http.Request) (int, error) {
 	return id, nil
 }
 
-func getCustomerIDCtx(r *http.Request) (int, error) {
-	idStr, ok := r.Context().Value("customer_id").(string)
+func getUserIDCtx(r *http.Request) (int, error) {
+	idStr, ok := r.Context().Value("user_id").(string)
 	if !ok {
-		return 0, fmt.Errorf("customer id not found in context")
+		return 0, fmt.Errorf("user id not found in context")
 	}
 
 	id, err := strconv.Atoi(idStr)

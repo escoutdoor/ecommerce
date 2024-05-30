@@ -22,7 +22,7 @@ func NewAuthHandler(s store.AuthStorer) *AuthHandler {
 	}
 }
 
-func (h *AuthHandler) handleLoginCustomer(w http.ResponseWriter, r *http.Request) {
+func (h *AuthHandler) handleLoginUser(w http.ResponseWriter, r *http.Request) {
 	var req models.LoginReq
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		respond.Error(w, http.StatusBadRequest, err)
@@ -35,26 +35,26 @@ func (h *AuthHandler) handleLoginCustomer(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	customer, err := h.store.Login(req)
+	user, err := h.store.Login(req)
 	if err != nil {
 		respond.Error(w, http.StatusBadRequest, err)
 		return
 	}
 
-	token, err := tokens.CreateJWT(customer.ID)
+	token, err := tokens.CreateJWT(user.ID)
 	if err != nil {
 		respond.Error(w, http.StatusInternalServerError, err)
 		return
 	}
 
 	response := models.AuthResponse{
-		Customer: customer,
-		Token:    token,
+		User:  user,
+		Token: token,
 	}
 	respond.JSON(w, http.StatusOK, response)
 }
 
-func (h *AuthHandler) handleRegisterCustomer(w http.ResponseWriter, r *http.Request) {
+func (h *AuthHandler) handleRegisterUser(w http.ResponseWriter, r *http.Request) {
 	var req models.RegisterReq
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		respond.Error(w, http.StatusBadRequest, err)
@@ -67,7 +67,7 @@ func (h *AuthHandler) handleRegisterCustomer(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	customer, err := h.store.Register(req)
+	user, err := h.store.Register(req)
 	if err != nil {
 		if errors.Is(err, store.ErrEmailAlreadyExists) {
 			respond.Error(w, http.StatusBadRequest, err)
@@ -78,15 +78,15 @@ func (h *AuthHandler) handleRegisterCustomer(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	token, err := tokens.CreateJWT(customer.ID)
+	token, err := tokens.CreateJWT(user.ID)
 	if err != nil {
 		respond.Error(w, http.StatusInternalServerError, err)
 		return
 	}
 
 	response := models.AuthResponse{
-		Customer: customer,
-		Token:    token,
+		User:  user,
+		Token: token,
 	}
 	respond.JSON(w, http.StatusOK, response)
 }

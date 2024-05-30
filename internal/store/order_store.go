@@ -15,9 +15,9 @@ var (
 )
 
 type OrderStorer interface {
-	Create(ctx context.Context, customerID int, data models.OrderReq) (*models.Order, error)
-	GetByID(id int) (*models.Order, error)
-	Delete(id int) error
+	Create(context.Context, int, models.OrderReq) (*models.Order, error)
+	GetByID(int) (*models.Order, error)
+	Delete(int) error
 }
 
 type OrderStore struct {
@@ -32,7 +32,7 @@ func NewOrderStore(db *sql.DB) *OrderStore {
 	}
 }
 
-func (s *OrderStore) Create(ctx context.Context, customerID int, data models.OrderReq) (*models.Order, error) {
+func (s *OrderStore) Create(ctx context.Context, userID int, data models.OrderReq) (*models.Order, error) {
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, err
@@ -63,7 +63,7 @@ func (s *OrderStore) Create(ctx context.Context, customerID int, data models.Ord
 		total += float64(v.Quantity) * product.Price
 	}
 
-	order, err := s.createOrder(ctx, tx, customerID, total)
+	order, err := s.createOrder(ctx, tx, userID, total)
 	if err != nil {
 		return nil, err
 	}
@@ -129,9 +129,9 @@ func (s *OrderStore) Delete(id int) error {
 	return err
 }
 
-func (s *OrderStore) createOrder(ctx context.Context, tx *sql.Tx, customerID int, total float64) (*models.Order, error) {
+func (s *OrderStore) createOrder(ctx context.Context, tx *sql.Tx, userID int, total float64) (*models.Order, error) {
 	stmt, err := tx.PrepareContext(ctx, `
-		INSERT INTO ORDERS(TOTAL, CUSTOMER_ID) VALUES ($1, $2) 
+		INSERT INTO ORDERS(TOTAL, user_ID) VALUES ($1, $2) 
 		RETURNING *
 	`)
 	if err != nil {
@@ -139,7 +139,7 @@ func (s *OrderStore) createOrder(ctx context.Context, tx *sql.Tx, customerID int
 	}
 	defer stmt.Close()
 
-	rows, err := stmt.QueryContext(ctx, total, customerID)
+	rows, err := stmt.QueryContext(ctx, total, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -224,7 +224,7 @@ func scanIntoOrder(rows *sql.Rows) (*models.Order, error) {
 	err := rows.Scan(
 		&order.ID,
 		&order.Total,
-		&order.CustomerID,
+		&order.UserID,
 		&order.CreatedAt,
 		&order.UpdatedAt,
 	)

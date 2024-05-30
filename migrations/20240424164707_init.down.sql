@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS shipping_details;
 DROP TABLE IF EXISTS orders;
 DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS categories;
-DROP TABLE IF EXISTS customers;
+DROP TABLE IF EXISTS users;
 
 DROP TYPE IF EXISTS order_status;
 DROP TYPE IF EXISTS roles;

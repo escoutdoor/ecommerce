@@ -86,7 +86,7 @@ func (h *ProductHandler) handleDeleteProduct(w http.ResponseWriter, r *http.Requ
 
 func (h *ProductHandler) handleUpdateProduct(w http.ResponseWriter, r *http.Request) {
 	var req models.ProductReq
-	_, err := getCustomerIDCtx(r)
+	_, err := getUserIDCtx(r)
 	if err != nil {
 		respond.Error(w, http.StatusBadRequest, err)
 		return

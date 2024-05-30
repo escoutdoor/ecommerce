@@ -1,13 +1,13 @@
-CREATE TYPE roles as ENUM('admin', 'user');
+CREATE TYPE roles as ENUM('admin', 'customer');
 
-CREATE TABLE IF NOT EXISTS customers(
+CREATE TABLE IF NOT EXISTS users(
     "id" SERIAL PRIMARY KEY,
     "email" VARCHAR UNIQUE NOT NULL,
     "first_name" VARCHAR NOT NULL,
     "last_name" VARCHAR NULL,
     "date_of_birth" DATE NULL,
     "password" TEXT NOT NULL,
-    "role" roles NOT NULL DEFAULT 'user',
+    "role" roles NOT NULL DEFAULT 'customer',
     "created_at" TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -35,11 +35,11 @@ CREATE TYPE order_status as ENUM('pending', 'processing', 'shipped', 'delivered'
 CREATE TABLE IF NOT EXISTS orders (
     "id" SERIAL PRIMARY KEY,
     "total" DECIMAL(10, 2) NOT NULL,
-    "customer_id" INTEGER NOT NULL,
+    "user_id" INTEGER NOT NULL,
     "created_at" TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    CONSTRAINT "fk_customer" FOREIGN KEY ("customer_id")
-        REFERENCES customers ("id")
+    CONSTRAINT "fk_user" FOREIGN KEY ("user_id")
+        REFERENCES users ("id")
         ON DELETE SET NULL
 );
 

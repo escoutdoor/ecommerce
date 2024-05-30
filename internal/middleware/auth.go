@@ -16,7 +16,7 @@ var (
 	ErrForbidden    = errors.New("forbidden")
 )
 
-func JWTAuth(s store.CustomerStorer) func(h http.Handler) http.Handler {
+func JWTAuth(s store.UserStorer) func(h http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			token := r.Header.Get("Authorization")
@@ -26,20 +26,20 @@ func JWTAuth(s store.CustomerStorer) func(h http.Handler) http.Handler {
 			}
 			token = token[len("Bearer "):]
 
-			customerID, err := tokens.VerifyToken(token)
+			userID, err := tokens.VerifyToken(token)
 			if err != nil {
 				respond.Error(w, http.StatusUnauthorized, err)
 				return
 			}
 
-			customer, err := s.GetByID(customerID)
+			user, err := s.GetByID(userID)
 			if err != nil {
 				respond.Error(w, http.StatusUnauthorized, err)
 				return
 			}
 
-			ctx := context.WithValue(r.Context(), "customer_id", fmt.Sprintf("%d", customerID))
-			ctx = context.WithValue(ctx, "role", customer.Role)
+			ctx := context.WithValue(r.Context(), "user_id", fmt.Sprintf("%d", userID))
+			ctx = context.WithValue(ctx, "role", user.Role)
 			newReq := r.WithContext(ctx)
 			h.ServeHTTP(w, newReq)
 		})

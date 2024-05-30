@@ -13,10 +13,10 @@ var (
 )
 
 type CategoryStorer interface {
-	GetByID(id int) (*models.Category, error)
-	Create(data models.CategoryReq) (*models.Category, error)
-	Delete(id int) error
-	Update(id int, data models.CategoryReq) (*models.Category, error)
+	GetByID(int) (*models.Category, error)
+	Create(models.CategoryReq) (*models.Category, error)
+	Delete(int) error
+	Update(int, models.CategoryReq) (*models.Category, error)
 }
 
 type CategoryStore struct {

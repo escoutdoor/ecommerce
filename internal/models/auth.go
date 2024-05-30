@@ -23,6 +23,6 @@ type TokenClaims struct {
 }
 
 type AuthResponse struct {
-	*Customer
+	*User
 	Token string `json:"token"`
 }

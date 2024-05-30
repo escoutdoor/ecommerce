@@ -15,10 +15,10 @@ var (
 )
 
 type ProductStorer interface {
-	Create(data models.ProductReq) (*models.Product, error)
-	GetByID(id int) (*models.Product, error)
-	Delete(id int) error
-	Update(id int, data models.ProductReq) (*models.Product, error)
+	Create(models.ProductReq) (*models.Product, error)
+	GetByID(int) (*models.Product, error)
+	Delete(int) error
+	Update(int, models.ProductReq) (*models.Product, error)
 }
 
 type ProductStore struct {

@@ -22,7 +22,7 @@ func NewOrderHandler(s store.OrderStorer) *OrderHandler {
 }
 
 func (h *OrderHandler) handleCreateOrder(w http.ResponseWriter, r *http.Request) {
-	id, err := getCustomerIDCtx(r)
+	id, err := getUserIDCtx(r)
 	if err != nil {
 		respond.Error(w, http.StatusBadRequest, err)
 		return

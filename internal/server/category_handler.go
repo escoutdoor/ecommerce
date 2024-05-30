@@ -83,7 +83,7 @@ func (h *CategoryHandler) handleDeleteCategory(w http.ResponseWriter, r *http.Re
 
 func (h *CategoryHandler) handleUpdateCategory(w http.ResponseWriter, r *http.Request) {
 	var req models.CategoryReq
-	_, err := getCustomerIDCtx(r)
+	_, err := getUserIDCtx(r)
 	if err != nil {
 		respond.Error(w, http.StatusBadRequest, err)
 		return
