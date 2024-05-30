@@ -15,9 +15,9 @@ var (
 )
 
 type OrderStorer interface {
-	Create(context.Context, int, models.OrderReq) (*models.Order, error)
-	GetByID(int) (*models.Order, error)
-	Delete(int) error
+	Create(ctx context.Context, id int, data models.OrderReq) (*models.Order, error)
+	GetByID(id int) (*models.Order, error)
+	Delete(id int) error
 }
 
 type OrderStore struct {

@@ -15,9 +15,9 @@ var (
 )
 
 type UserStorer interface {
-	GetByID(int) (*models.User, error)
-	Update(int, models.UpdateUserReq) (*models.User, error)
-	Delete(int) error
+	GetByID(id int) (*models.User, error)
+	Update(id int, data models.UpdateUserReq) (*models.User, error)
+	Delete(id int) error
 }
 
 type UserStore struct {

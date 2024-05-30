@@ -27,7 +27,7 @@ func VerifyToken(tokenStr string) (int, error) {
 		case errors.Is(err, jwt.ErrTokenMalformed):
 			return 0, fmt.Errorf("That's not even a token")
 		case errors.Is(err, jwt.ErrTokenSignatureInvalid):
-			return 0, fmt.Errorf("Invalid signature")
+			return 0, fmt.Errorf("Invalid token signature")
 		case errors.Is(err, jwt.ErrTokenExpired) || errors.Is(err, jwt.ErrTokenNotValidYet):
 			return 0, fmt.Errorf("Token is either expired or not active yet")
 		default:

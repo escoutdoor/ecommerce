@@ -15,8 +15,8 @@ var (
 )
 
 type AuthStorer interface {
-	Login(models.LoginReq) (*models.User, error)
-	Register(models.RegisterReq) (*models.User, error)
+	Login(data models.LoginReq) (*models.User, error)
+	Register(data models.RegisterReq) (*models.User, error)
 }
 
 type AuthStore struct {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
@@ -27,6 +28,11 @@ func NewServer() *http.Server {
 		log.Fatal("load env error: ", err)
 	}
 
+	var port = os.Getenv("PORT")
+	if len(port) == 0 {
+		port = "8080"
+	}
+
 	db, err := store.ConnectToDB()
 	if err != nil {
 		log.Fatal("new server error: ", err)
@@ -48,7 +54,7 @@ func NewServer() *http.Server {
 	category := NewCategoryHandler(categoryStore)
 
 	s := &Server{
-		listenAddr: ":8080",
+		listenAddr: ":" + port,
 		user:       user,
 		auth:       auth,
 		product:    product,
