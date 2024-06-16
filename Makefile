@@ -1,7 +1,7 @@
 include .env
 
 build: 
-	@go build -o bin/ec cmd/api/main.go
+	@go build -o bin/ec ./cmd/api/main.go
 
 run: build
 	@./bin/ec

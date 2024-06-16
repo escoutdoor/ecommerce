@@ -2,12 +2,18 @@ package respond
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"reflect"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
+)
+
+var (
+	ErrUnauthorized = errors.New("unauthorized")
+	ErrForbidden    = errors.New("forbidden")
 )
 
 type ApiError struct {

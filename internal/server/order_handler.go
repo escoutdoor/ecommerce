@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/escoutdoor/ecommerce/internal/models"
@@ -61,6 +62,13 @@ func (h *OrderHandler) handleGetOrderByID(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	userID, err := getUserIDCtx(r)
+	if err != nil {
+		respond.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	role := r.Context().Value("role").(string)
 	order, err := h.store.GetByID(id)
 	if err != nil {
 		if errors.Is(err, store.ErrOrderNotFound) {
@@ -71,6 +79,10 @@ func (h *OrderHandler) handleGetOrderByID(w http.ResponseWriter, r *http.Request
 		respond.Error(w, http.StatusInternalServerError, err)
 		return
 	}
+	if order.UserID != userID && role != "admin" {
+		respond.Error(w, http.StatusForbidden, respond.ErrForbidden)
+		return
+	}
 
 	respond.JSON(w, http.StatusOK, order)
 }
@@ -79,6 +91,28 @@ func (h *OrderHandler) handleDeleteOrder(w http.ResponseWriter, r *http.Request)
 	id, err := getID(r)
 	if err != nil {
 		respond.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	userID, err := getUserIDCtx(r)
+	if err != nil {
+		respond.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	order, err := h.store.GetByID(id)
+	if err != nil {
+		fmt.Println(err)
+		if errors.Is(err, store.ErrOrderNotFound) {
+			respond.Error(w, http.StatusNotFound, err)
+			return
+		}
+
+		respond.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	if order.UserID != userID {
+		respond.Error(w, http.StatusForbidden, respond.ErrForbidden)
 		return
 	}
 

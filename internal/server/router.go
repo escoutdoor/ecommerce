@@ -61,6 +61,7 @@ func (s *Server) Router() *chi.Mux {
 
 			r.Post("/", s.order.handleCreateOrder)
 			r.Delete("/{id}", s.order.handleDeleteOrder)
+			r.Get("/{id}", s.order.handleGetOrderByID)
 		})
 	})
 
